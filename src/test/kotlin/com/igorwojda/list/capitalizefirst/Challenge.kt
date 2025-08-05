@@ -3,8 +3,23 @@ package com.igorwojda.list.capitalizefirst
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
+fun main() {
+    val temp:List<String> = listOf()
+
+
+}
+
 private fun capitalizeFirst(list: List<String>): List<String> {
-    TODO("Add your solution here")
+    if(list.size == 0) return list
+    else if(list.size > 1) {
+        return capitalizeFirst(list.subList(0, 1)) + capitalizeFirst(list.subList(1, list.size))
+    } else {
+        var str = list.get(0)
+        if (str.length > 0) {
+            str = str.get(0).uppercase() + str.substring(1 until str.length)
+        }
+        return listOf(str)
+    }
 }
 
 private class Test {
