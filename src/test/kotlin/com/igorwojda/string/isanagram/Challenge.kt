@@ -4,7 +4,15 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun isAnagram(str1: String, str2: String): Boolean {
-    TODO("Add your solution here")
+    if (str1.isEmpty() && str2.isEmpty()) return true
+    else {
+        val re = Regex("[^A-Za-z0-9]")
+        val newStr1 = str1.replace(re, "").lowercase()
+        val newStr2 = str2.replace(re, "").lowercase()
+
+        return if (newStr1.length != newStr2.length) false
+        else newStr1.toList().sorted() == newStr2.toList().sorted()
+    }
 }
 
 private class Test {
