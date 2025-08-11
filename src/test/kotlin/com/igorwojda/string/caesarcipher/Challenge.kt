@@ -6,13 +6,14 @@ import org.junit.jupiter.api.Test
 private fun encodeCaesarCipher(str: String, shift: Int): String {
     assert(str.matches( Regex("[a-z]*")))
 
-    val result = str.map {
-        val newCode = it.code + (shift % 26)
-        if (newCode in 97..122) Char(newCode)
-        else Char(((newCode % 122) % 26) + 96)
-    }
+    val aCode = 'a'.code
+    val zCode = 'z'.code
 
-    return result.joinToString(separator = "")
+    return str.map {
+        val newCode = it.code + (shift % 26)
+        if (newCode in aCode..zCode) Char(newCode)
+        else Char(((newCode % zCode) % 26) + (aCode - 1))
+    }.joinToString(separator = "")
 }
 
 private class Test {
