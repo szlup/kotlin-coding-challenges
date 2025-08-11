@@ -4,7 +4,15 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun encodeCaesarCipher(str: String, shift: Int): String {
-    TODO("Add your solution here")
+    assert(str.matches( Regex("[a-z]*")))
+
+    val result = str.map {
+        val newCode = it.code + (shift % 26)
+        if (newCode in 97..122) Char(newCode)
+        else Char(((newCode % 122) % 26) + 96)
+    }
+
+    return result.joinToString(separator = "")
 }
 
 private class Test {
