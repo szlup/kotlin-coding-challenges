@@ -4,7 +4,47 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun generateSpiralMatrix(n: Int): List<MutableList<Int?>> {
-    TODO("Add your solution here")
+    if (n==0) return listOf<MutableList<Int?>>()
+    else {
+        val result = mutableListOf<MutableList<Int?>>()
+        repeat(n) {
+            result.add(MutableList<Int?>(n) {index -> null})
+        }
+
+        var nextDirection = "right"
+        var x = 0
+        var y = 0
+        for (i in 1..(n*n)){
+            result[y][x] = i
+
+            when (nextDirection) {
+                "right" -> {
+                    if (x == result[y].lastIndex || result[y][x+1] != null) {
+                        nextDirection = "down"
+                        y++
+                    } else x++
+                }"down" -> {
+                    if (y == result.lastIndex || result[y+1][x] != null) {
+                        nextDirection = "left"
+                        x--
+                    } else y++
+                }"left" -> {
+                    if (x == 0 || result[y][x-1] != null) {
+                        nextDirection = "up"
+                        y--
+                    }else x--
+                }"up" -> {
+                    if (y==0 || result[y-1][x] != null) {
+                        nextDirection = "right"
+                        x++
+                    }else y--
+                }else -> throw Exception("invalid value for nextDirection")
+            }
+        }
+
+        return result.toList()
+
+    }
 }
 
 private class Test {
