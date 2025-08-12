@@ -8,7 +8,7 @@ private fun generateSpiralMatrix(n: Int): List<MutableList<Int?>> {
     else {
         val result = mutableListOf<MutableList<Int?>>()
         repeat(n) {
-            result.add(MutableList<Int?>(n) {index -> null})
+            result.add(MutableList<Int?>(n) {null})
         }
 
         var nextDirection = "right"
