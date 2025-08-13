@@ -1,11 +1,14 @@
 package com.igorwojda.stack.basic
 
+//import com.igorwojda.queue.basic.Queue
+//import com.igorwojda.queue.basic.Queue.Element
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 //list implementation
 private class List_Stack<E> {
     var size = 0
+        private set
 
     private val list = mutableListOf<E>()
 
@@ -35,25 +38,47 @@ private class List_Stack<E> {
 //linked list implementation
 private class Stack<E> {
     var size = 0
+        private set
 
-    private val list = mutableListOf<E>()
+    var first: Element<E>? = null
+    var last: Element<E>? = null
+
+    inner class Element<E> (val content: E, var prev: Stack<E>.Element<E>? = null)
 
     fun add(element: E) {
-        list.add(element)
+        if (this.isEmpty()) {
+            this.first = Element<E>(element)
+        } else if (this.last == null) {
+            val toAdd = Element<E>(element, this.first)
+            this.last = toAdd
+        } else {
+            val toAdd = Element<E>(element, this.last)
+            this.last = toAdd
+        }
         size++
     }
 
+
+
     fun remove(): E? {
-        val result = list.lastOrNull()
-        if (result != null) {
+        if (this.isEmpty()) return null
+        else if (this.last == null) {
+            val result = this.first
+            this.first = null
             size--
-            list.removeLast()
+            return result?.content
+        }else{
+            val result = this.last
+            size--
+            if (size < 2) this.last = null
+            else this.last = result!!.prev
+
+            return result?.content
         }
-        return result
     }
 
     fun peek(): E? {
-        return list.lastOrNull()
+        return this.last?.content ?: this.first?.content
     }
 
     fun isEmpty(): Boolean {

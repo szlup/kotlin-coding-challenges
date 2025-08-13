@@ -43,7 +43,7 @@ private class Queue<E> {
     var size = 0
         private set
 
-    val list = mutableListOf<E>()
+    //val list = mutableListOf<E>()
 
     var first: Element<E>? = null
     var last: Element<E>? = null
