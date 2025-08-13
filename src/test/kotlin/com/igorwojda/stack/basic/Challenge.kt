@@ -3,23 +3,61 @@ package com.igorwojda.stack.basic
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
-private class Stack<E> {
+//list implementation
+private class List_Stack<E> {
     var size = 0
 
+    private val list = mutableListOf<E>()
+
     fun add(element: E) {
-        TODO("Add your solution here")
+        list.add(element)
+        size++
     }
 
     fun remove(): E? {
-        TODO("Add your solution here")
+        val result = list.lastOrNull()
+        if (result != null) {
+            size--
+            list.removeLast()
+        }
+        return result
     }
 
     fun peek(): E? {
-        TODO("Add your solution here")
+        return list.lastOrNull()
     }
 
     fun isEmpty(): Boolean {
-        TODO("Add your solution here")
+        return (size == 0)
+    }
+}
+
+//linked list implementation
+private class Stack<E> {
+    var size = 0
+
+    private val list = mutableListOf<E>()
+
+    fun add(element: E) {
+        list.add(element)
+        size++
+    }
+
+    fun remove(): E? {
+        val result = list.lastOrNull()
+        if (result != null) {
+            size--
+            list.removeLast()
+        }
+        return result
+    }
+
+    fun peek(): E? {
+        return list.lastOrNull()
+    }
+
+    fun isEmpty(): Boolean {
+        return (size == 0)
     }
 }
 
