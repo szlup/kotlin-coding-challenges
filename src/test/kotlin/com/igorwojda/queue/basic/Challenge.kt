@@ -3,20 +3,90 @@ package com.igorwojda.queue.basic
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
+//List Implementation
+private class Queue_List<E> {
+    var size = 0
+        private set
+
+    val list = mutableListOf<E>()
+
+    fun add(element: E) {
+        list.add(element)
+        size++
+    }
+
+    fun remove(): E? {
+        if (this.isEmpty()) return null
+        else {
+            val result = list[0]
+            list.removeAt(0)
+            size--
+            return result
+        }
+    }
+
+    fun peek(): E? {
+        if (this.isEmpty()) return null
+        else {
+            val result = list[0]
+            return result
+        }
+    }
+
+    fun isEmpty(): Boolean {
+        return list.isEmpty()
+    }
+}
+
+//Linked List implementation
 private class Queue<E> {
     var size = 0
         private set
 
-    fun add(element: E) {
-        TODO("Add your solution here")
+    val list = mutableListOf<E>()
+
+    var first: Element<E>? = null
+    var last: Element<E>? = null
+
+    inner class Element<E> (val content: E, var next: Queue<E>.Element<E>? = null)
+
+    fun add(value: E) {
+        if (this.isEmpty()) {
+            this.first = Element<E>(value)
+        }else {
+            val toAdd = Element<E>(value)
+            if (this.last == null) {
+                this.last = toAdd
+                this.first!!.next = toAdd
+            }else {
+                this.last!!.next = toAdd
+                this.last = toAdd
+            }
+        }
+        size++
     }
 
-    fun remove(): E = TODO("Add your solution here")
+    fun remove(): E? {
+        if (this.isEmpty()) return null
+        else {
+            val result = this.first
+            this.first = this.first?.next
+            size--
+            if (size < 2) this.last = null
+            return result?.content
+        }
+    }
 
-    fun peek(): E = TODO("Add your solution here")
+    fun peek(): E? {
+        if (this.isEmpty()) return null
+        else {
+            val result = this.first
+            return result?.content
+        }
+    }
 
     fun isEmpty(): Boolean {
-        TODO("Add your solution here")
+        return size == 0
     }
 }
 
