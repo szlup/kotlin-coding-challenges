@@ -29,8 +29,6 @@ private fun mergeSort(list: List<Int>): List<Int> {
         val right = list.subList(list.size / 2, list.size).toMutableList()
 
         return if (left.size == 1 && right.size == 1) merge(left, right)
-        else if (left.size == 1) merge(left, mergeSort(right).toMutableList())
-        else if (right.size == 1) merge(mergeSort(left).toMutableList(), right)
         else merge(mergeSort(left).toMutableList(), mergeSort(right).toMutableList())
 
     }
