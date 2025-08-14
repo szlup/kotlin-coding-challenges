@@ -4,7 +4,28 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun selectionSort(list: List<Int>): List<Number> {
-    return list
+    if (list.isEmpty()) return list
+
+    val sorted = list.toMutableList()
+
+    for (i in 0..sorted.lastIndex) {
+        var min = sorted[i]
+        var minIndex = i
+        var toSwap = false
+        for (j in i+1..sorted.lastIndex) {
+            if (sorted[j] < min) {
+                min = sorted[j]
+                minIndex = j
+                toSwap = true
+            }
+        }
+        if (toSwap) {
+            sorted[minIndex] = sorted[i]
+            sorted[i] = min
+        }
+    }
+
+    return sorted.toList()
 }
 
 private class Test {
