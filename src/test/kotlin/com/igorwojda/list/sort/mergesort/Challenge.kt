@@ -6,10 +6,34 @@ import org.junit.jupiter.api.Test
 private fun mergeSort(list: List<Int>): List<Int> {
     // Take two sorted lists and merge them together into one sorted list
     fun merge(left: MutableList<Int>, right: MutableList<Int>): MutableList<Int> {
-        TODO("Add your solution here")
+        if (left.size == 1 && right.size == 1) {
+            if (left[0] > right[0]) return mutableListOf(right[0], left[0])
+            else return mutableListOf(left[0], right[0])
+        } else {
+            val result = mutableListOf<Int>()
+
+            while (!left.isEmpty()) {
+                if (right.isEmpty() || left[0] < right[0]) result.add(left.removeFirst())
+                else result.add(right.removeFirst())
+            }
+            if (!right.isEmpty()) result.addAll(right)
+
+            return result
+        }
     }
 
-    TODO("Add your solution here")
+
+    if (list.size < 2) return list
+    else {
+        val left = list.subList(0, list.size / 2).toMutableList()
+        val right = list.subList(list.size / 2, list.size).toMutableList()
+
+        return if (left.size == 1 && right.size == 1) merge(left, right)
+        else if (left.size == 1) merge(left, mergeSort(right).toMutableList())
+        else if (right.size == 1) merge(mergeSort(left).toMutableList(), right)
+        else merge(mergeSort(left).toMutableList(), mergeSort(right).toMutableList())
+
+    }
 }
 
 private class Test {
