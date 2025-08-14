@@ -9,7 +9,7 @@ private fun bubbleSort(list: List<Int>): List<Number> {
     val newList = list.toMutableList()
     var swapped: Boolean = true
 
-    while (swapped) {
+    for (j in 0..newList.lastIndex) {
         swapped = false
         for (i in 0..newList.lastIndex - 1) {
             var current = newList[i]
@@ -21,6 +21,8 @@ private fun bubbleSort(list: List<Int>): List<Number> {
                 swapped = true
             }
         }
+
+        if (!swapped) return newList.toList()
     }
 
     return newList.toList()
