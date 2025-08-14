@@ -4,7 +4,26 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun insertionSort(list: MutableList<Int>): List<Int> {
-    TODO("Add your solution here")
+    val sortedStart = 0
+    var sortedEnd = 0
+
+    for (i in 1..list.lastIndex) {
+        var toInsert = i
+        for (j in sortedStart..sortedEnd) {
+            //find location to insert
+            if (list[i] < list[j]) {
+                toInsert = j
+                break
+            }
+        }
+        if (toInsert != i) {
+            val temp = list.removeAt(i)
+            list.add(toInsert, temp)
+        }
+        sortedEnd++
+    }
+
+    return list.toList()
 }
 
 private class Test {
