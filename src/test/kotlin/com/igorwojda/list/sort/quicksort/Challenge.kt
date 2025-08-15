@@ -4,7 +4,52 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun quickSort(list: MutableList<Int>, left: Int = 0, right: Int = list.lastIndex): List<Number> {
-    TODO("Add your solution here")
+    val size = right - left + 1
+    if (list.isEmpty() || size < 2) return list
+    else if (size == 2) {
+        if (list[left] > list[right]) list.swap(left, right)
+        return list
+    }
+//    else if (size == 3) {
+//        if (list[left] > list[right]) list.swap(left, right)
+//        if (list[left] > list[left+1]) list.swap(left, left+1)
+//        return list
+//    }
+    else {
+        val pivot = list[left]
+        var i = left-1
+        var j = right+1
+        var pivotIndex: Int
+
+        while (true) {
+            //find first value from left >= pivot
+            while (i < 0 || list[i] < pivot) i++
+
+            //find first value from right <= pivot
+            while (j > list.lastIndex || list[j] > pivot) j--
+
+            if (i >= j) {
+                pivotIndex = j
+                break
+            }
+            list.swap(i, j)
+            i++
+            j--
+        }
+
+        quickSort(
+            list,
+            left,
+            pivotIndex,
+        )
+        quickSort(
+            list,
+            (if (pivotIndex < list.lastIndex) pivotIndex + 1 else list.lastIndex),
+            right,
+        )
+
+        return list.toList()
+    }
 }
 
 private fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
