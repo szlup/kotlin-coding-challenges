@@ -4,21 +4,59 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun radixSort(list: List<Int>): List<Number> {
-    TODO("Add your solution here")
+    if (list.isEmpty() || list.size < 2) return list
+    // group by key length
+    var buckets = mutableListOf<MutableList<Int>>()
+    val working = list.toMutableList()
+    while (working.isNotEmpty()) {
+        val toAdd = working.filter {it.digitCount == maxDigits(working)}.toMutableList()
+        working.removeAll(toAdd)
+        buckets.add(0, toAdd)
+    }
+    // within each group, sort with least-significant digits
+    buckets = buckets.map {sortBucket(it)}.toMutableList()
+
+    // flatten buckets and return
+    return buckets.flatten()
+}
+
+private fun sortBucket(bucket: MutableList<Int>, i: Int = maxDigits(bucket) - 1): MutableList<Int> {
+    // make new buckets for 0-9 (make a list of size 10), then add numbers into the matching index
+    if (bucket.size < 2) return bucket
+
+    // assumes that elements in bucket are all of the same key length
+    val subBuckets = MutableList<MutableList<Int>>(10) {mutableListOf<Int>()}
+
+    for (j in 0..bucket.lastIndex) {
+        val dest = bucket[j].getDigitAt(i).digitToInt()
+        subBuckets[dest].add(bucket[j])
+    }
+
+    val result = subBuckets.flatten().toMutableList()
+
+    return if (i == 0) result
+    else sortBucket(result, i - 1)
 }
 
 private fun Int.getDigitAt(index: Int): Char {
-    return '0'
+    val result = this.toString()
+    return result.getOrElse(index) {'0'}
 }
 
-private val Int.digitCount get() = -1
+private val Int.digitCount get() = this.toString().length
 
-private fun maxDigits(list: List<Int>): Int = -1
+private fun maxDigits(list: List<Int>): Int {
+    if (list.isEmpty()) return 0
+    else {
+        val counts = list.map { it.digitCount }
+        return counts.max()
+    }
+}
 
 private class Test {
     @Test
     fun `getDigitAt at 0 for 123 is 1`() {
-        123.getDigitAt(0) shouldBeEqualTo '3'
+        123.getDigitAt(0) shouldBeEqualTo '1'
     }
 
     @Test
@@ -28,7 +66,7 @@ private class Test {
 
     @Test
     fun `getDigitAt at 2 for 123 is 3`() {
-        123.getDigitAt(2) shouldBeEqualTo '1'
+        123.getDigitAt(2) shouldBeEqualTo '3'
     }
 
     @Test
