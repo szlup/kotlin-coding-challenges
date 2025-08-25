@@ -4,7 +4,17 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun equalDigitFrequency(i1: Int, i2: Int): Boolean {
-    TODO("Add your solution here")
+    val seq1 = i1.toString()
+    val map1 = seq1.associate { digit ->
+        digit to seq1.count {it == digit}
+    }
+
+    val seq2 = i2.toString()
+    val map2 = seq2.associate { digit ->
+        digit to seq2.count {it == digit}
+    }
+
+    return map1 == map2
 }
 
 private class Test {
