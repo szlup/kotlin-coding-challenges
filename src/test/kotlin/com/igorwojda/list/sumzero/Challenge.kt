@@ -4,7 +4,14 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun sumZero(list: List<Int>): Pair<Int, Int>? {
-    TODO("Add your solution here")
+    if (list.size < 2) return null
+
+    for (i in 0..list.lastIndex) {
+        for (j in 0..list.lastIndex) {
+            if (list[i] + list [j] == 0) return Pair(list[i], list[j])
+        }
+    }
+    return null
 }
 
 private class Test {
