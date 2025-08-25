@@ -4,7 +4,12 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 fun getDuplicatedArguments(vararg strings: String): List<String>? {
-    TODO("Add your solution here")
+    if (strings.size < 2) return listOf()
+    else {
+        val freqs = strings.groupingBy {it}.eachCount()
+        return freqs.filter { it.value > 1}.keys.toList()
+    }
+
 }
 
 private class Test {
