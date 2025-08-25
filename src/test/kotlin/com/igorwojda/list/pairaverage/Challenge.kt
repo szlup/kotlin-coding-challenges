@@ -4,7 +4,22 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 fun hasAverage(list: List<Int>, average: Double): Boolean {
-    TODO("Add your solution here")
+    if (list.size < 2) return false
+    //set up loop
+    var i = 0
+    var j = list.lastIndex
+
+    while (i < j) {
+        val avg: Double = (list[i] + list[j])/2.0
+
+        when {
+            avg == average -> return true
+            avg < average -> i++
+            avg > average -> j--
+        }
+    }
+    return false
+
 }
 
 inline fun <K, V> MutableMap<K, V>.incrementExisting(key: K, value: V) {
