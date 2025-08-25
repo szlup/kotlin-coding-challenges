@@ -4,7 +4,18 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun squareEquals(list: List<Int>, squared: List<Int>): Boolean {
-    TODO("Add your solution here")
+    //make list a map of elem^2 -> count
+    val map1 = list.associate { elem ->
+        elem * elem to list.count {it == elem}
+    }
+
+    //make squared a map of elem -> count
+    val map2 = squared.associate { elem ->
+        elem to squared.count {it == elem}
+    }
+
+    //check if they're the same, return result
+    return map1 == map2
 }
 
 private class Test {
