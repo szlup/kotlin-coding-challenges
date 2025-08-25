@@ -8,15 +8,21 @@ private class BinarySearchTree<E : Comparable<E>> {
         private set
 
     fun add(element: E) {
-        TODO("Add your solution here")
+        if (root == null) root = BinaryNode(element)
+        else root!!.add(element)
     }
 
+
     fun contains(element: E): Boolean {
-        TODO("Add your solution here")
+        if (this.isEmpty()) return false
+        else if (root!!.data == element) return true
+        else {
+            return root!!.contains(element)
+        }
     }
 
     fun isEmpty(): Boolean {
-        TODO("Add your solution here")
+        return root == null
     }
 }
 
@@ -24,7 +30,28 @@ private data class BinaryNode<E : Comparable<E>>(
     val data: E,
     var left: BinaryNode<E>? = null,
     var right: BinaryNode<E>? = null,
-)
+) {
+
+    fun add(element: E) {
+        if (element < data) {
+            if (left == null) left = BinaryNode(element)
+            else left!!.add(element)
+        }else if (element > data){
+            if (right == null) right = BinaryNode(element)
+            else right!!.add(element)
+        }else return
+    }
+
+    fun contains(element: E): Boolean {
+        return when {
+            element in listOf(data, left?.data, right?.data) -> true
+            element < data && left != null -> left!!.contains(element)
+            element > data && right != null -> right!!.contains(element)
+            else -> false
+        }
+    }
+
+}
 
 private class Test {
     @Test
