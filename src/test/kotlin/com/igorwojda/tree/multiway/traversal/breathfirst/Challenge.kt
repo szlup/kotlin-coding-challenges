@@ -4,7 +4,44 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun traverseBreathFirst(tree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<BinaryNode<Char>>()
+
+    if (tree.isEmpty()) return listOf<Char>()
+    else {
+        var allNull = false
+
+        result.add(tree.root!!)
+        //add left and right
+        if (tree.root!!.left != null) result.add(tree.root!!.left!!)
+        if (tree.root!!.right != null) result.add(tree.root!!.right!!)
+        var i = 1
+        var j = result.lastIndex
+
+        while (!allNull) {//not sure about condition...
+            //move through list to make sure we add left/right of added elements before moving on
+            var currentLevel = result.subList(i, j+1)
+            var nextLevel = mutableListOf<BinaryNode<Char>>()
+            for (node in currentLevel) {
+                if (node.left == null && node.right == null) allNull = true
+                else if (node.left != null && node.right != null) {
+                    nextLevel.add(node.left!!)
+                    nextLevel.add(node.right!!)
+                    allNull = false
+                } else if (node.left != null) {
+                    nextLevel.add(node.left!!)
+                    allNull = false
+                } else if (node.right != null) {
+                    nextLevel.add(node.right!!)
+                    allNull = false
+                } else throw Exception("Unexpected state")
+            }
+            result.addAll(nextLevel)
+            i = j + 1
+            j = result.lastIndex
+        }
+
+        return result.map { it.data }
+    }
 }
 
 private class BinarySearchTree<E : Comparable<E>> {
