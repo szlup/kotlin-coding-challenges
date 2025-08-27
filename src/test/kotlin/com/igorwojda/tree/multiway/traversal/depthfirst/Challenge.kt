@@ -4,27 +4,139 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun traverseDepthFirstPreOrder(binaryTree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<Char>()
+    val stack = Stack<BinaryNode<Char>>()
+
+    if (binaryTree.isEmpty()) return result
+    else binaryTree.root?.let {stack.add(it)}
+
+    while (!stack.isEmpty()) {
+        val current = stack.remove() ?: break
+
+        result.add(current.data)
+
+        current.right?.let { stack.add(it) }
+        current.left?.let { stack.add(it) }
+    }
+
+    return result
 }
 
 private fun traverseDepthFirstInOrder(binaryTree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<Char>()
+    val stack = Stack<BinaryNode<Char>>()
+
+    if (binaryTree.isEmpty()) return result
+
+    var current = binaryTree.root
+    while (!stack.isEmpty() || current != null) {
+        if (current != null) {
+            stack.add(current)
+            current = current.left
+        } else {
+            current = stack.remove()
+            result.add(current!!.data)
+            current = current.right
+        }
+    }
+
+    return result
 }
 
 private fun traverseDepthFirstPostOrder(binaryTree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<Char>()
+    val stack = Stack<BinaryNode<Char>>()
+
+    if (binaryTree.isEmpty()) return result
+    else {
+        binaryTree.root?.let {stack.add(it)}
+        binaryTree.root?.right?.let {stack.add(it)}
+        binaryTree.root?.left?.let {stack.add(it)}
+    }
+
+    while (!stack.isEmpty()) {
+        val current = stack.peek() ?: break
+
+        //result.add(current.data)
+
+        current.right?.let { if (it.data !in result) stack.add(it) }
+        current.left?.let { if (it.data !in result) stack.add(it) }
+
+        if (current == stack.peek()) {
+            result.add(current.data)
+            stack.remove()
+        }
+    }
+
+    return result
 }
 
 private fun traverseDepthFirstPreOrderReversed(binaryTree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<Char>()
+    val stack = Stack<BinaryNode<Char>>()
+
+    if (binaryTree.isEmpty()) return result
+    else binaryTree.root?.let {stack.add(it)}
+
+    while (!stack.isEmpty()) {
+        val current = stack.remove() ?: break
+
+        result.add(current.data)
+
+        current.left?.let { stack.add(it) }
+        current.right?.let { stack.add(it) }
+    }
+
+    return result
 }
 
 private fun traverseDepthFirstInOrderReversed(binaryTree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<Char>()
+    val stack = Stack<BinaryNode<Char>>()
+
+    if (binaryTree.isEmpty()) return result
+
+    var current = binaryTree.root
+    while (!stack.isEmpty() || current != null) {
+        if (current != null) {
+            stack.add(current)
+            current = current.right
+        } else {
+            current = stack.remove()
+            result.add(current!!.data)
+            current = current.left
+        }
+    }
+
+    return result
 }
 
 private fun traverseDepthFirstPostOrderReversed(binaryTree: BinarySearchTree<Char>): List<Char> {
-    TODO("Add your solution here")
+    val result = mutableListOf<Char>()
+    val stack = Stack<BinaryNode<Char>>()
+
+    if (binaryTree.isEmpty()) return result
+    else {
+        binaryTree.root?.let {stack.add(it)}
+        binaryTree.root?.left?.let {stack.add(it)}
+        binaryTree.root?.right?.let {stack.add(it)}
+    }
+
+    while (!stack.isEmpty()) {
+        val current = stack.peek() ?: break
+
+        //result.add(current.data)
+
+        current.left?.let { if (it.data !in result) stack.add(it) }
+        current.right?.let { if (it.data !in result) stack.add(it) }
+
+        if (current == stack.peek()) {
+            result.add(current.data)
+            stack.remove()
+        }
+    }
+
+    return result
 }
 
 private class BinarySearchTree<E : Comparable<E>> {
