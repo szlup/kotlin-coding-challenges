@@ -4,7 +4,53 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun levelWidth(tree: Node): List<Int> {
-    TODO("Add your solution here")
+    if (tree.children.isEmpty()) return listOf(1)
+
+    val result = mutableListOf<Int>()
+    val queue = Queue<Node>()
+
+    queue.add(tree)
+    result.add(1)
+
+    val nextLevel = mutableListOf<Node>()
+    while (queue.isNotEmpty()) {
+        val current = queue.remove() ?: break
+
+        nextLevel.addAll(current.children)
+
+        if (queue.isEmpty()) {
+            if (nextLevel.isEmpty()) break
+            else {
+                queue.addAll(nextLevel)
+                result.add(nextLevel.size)
+                nextLevel.clear()
+            }
+        }
+    }
+
+    return result
+}
+
+private class Queue<E> {
+    private val list = mutableListOf<E>()
+
+    fun add(element: E) {
+        list.add(element)
+    }
+
+    fun addAll(elements: List<E>) {
+        list.addAll(elements)
+    }
+
+    fun remove() = if (list.isEmpty()) null else list.removeAt(0)
+
+    fun peek() = list.firstOrNull()
+
+    fun isEmpty() = list.isEmpty()
+
+    fun isNotEmpty() = list.isNotEmpty()
+
+    val size get() = list.size
 }
 
 private class Test {
