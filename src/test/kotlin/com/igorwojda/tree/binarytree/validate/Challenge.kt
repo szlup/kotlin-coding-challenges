@@ -4,8 +4,46 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun isValidSearchBinaryTree(node: Node<Int>): Boolean {
-    TODO("Add your solution here")
+    return if (node.left == null && node.right == null) true
+    else isValidSearchBinaryTree_helper(node.left, node.data, Direction.LEFT) &&
+            isValidSearchBinaryTree_helper(node.right, node.data, Direction.RIGHT)
 }
+
+private fun isValidSearchBinaryTree_helper(node: Node<Int>?, top: Int, dir: Direction): Boolean {
+    return when {
+        node == null -> true
+        node.left == null && node.right == null -> true
+        node.left == null && node.right != null -> {
+            val right = node.right!!.data
+            return if (right > node.data && (if (dir == Direction.RIGHT) right > top else right < top)) {
+                isValidSearchBinaryTree_helper(node.right, top, dir)
+            }else false
+        }
+        node.left != null && node.right == null -> {
+            val left = node.left!!.data
+            return if (left < node.data && (if (dir == Direction.RIGHT) left > top else left < top)) {
+                isValidSearchBinaryTree_helper(node.left, top, dir)
+            }else false
+        }
+        node.left != null && node.right != null -> {
+            val left = node.left!!.data
+            val right = node.right!!.data
+            return when {
+                left > node.data || right < node.data -> false
+                dir == Direction.LEFT  && (left > top || right > top) -> false
+                dir == Direction.RIGHT && (left < top || right < top) -> false
+                else -> {
+                    isValidSearchBinaryTree_helper(node.left, top, dir) &&
+                        isValidSearchBinaryTree_helper(node.right, top, dir)
+                }
+            }
+        }
+
+        else -> false
+    }
+}
+
+private enum class Direction { RIGHT, LEFT }
 
 private class Test {
     @Test
