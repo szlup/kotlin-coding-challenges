@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test
 
 fun flatten(list: List<*>): List<*> {
     return if (list.isEmpty()) list
-    else if (list.all { it !is Collection<*>}) list
+    else if (list.all { it !is List<*>}) list
     else {
-        val result = mutableListOf<Any>()
+        val result = mutableListOf<Any?>()
 
         for (elem in list) {
-            if (elem is Collection<*>) {
-                result.addAll(flatten_helper(listOf(elem)))
+            if (elem is List<*>) {
+                result.addAll(flatten_helper(elem))
             } else elem?.let {result.add(it)}
         }
 
@@ -19,15 +19,16 @@ fun flatten(list: List<*>): List<*> {
     }
 }
 
-fun flatten_helper(orig: List<Any>, dest: MutableList<Any> = mutableListOf<Any>()): List<Any> {
+fun flatten_helper(orig: List<*>, dest: MutableList<Any?> = mutableListOf<Any?>()): List<*> {
     if (orig.isEmpty()) return dest.toList()
-    else if (orig.all { it !is Collection<*> }) {
-        if (orig.size == 1) dest.add(orig[0])
+    else if (orig.all { it !is List<*> }) {
+        if (orig.size == 1) orig[0]?.let { dest.add(it) }
         else dest.addAll(orig)
         return dest.toList()
     }else {
-        val i = orig.indexOfFirst { it is Collection<*> }
+        val i = orig.indexOfFirst { it is List<*> }
         if (i != 0) dest.addAll(orig.subList(0, i))
+        dest.addAll(listOf(orig[i]))
         return if (i < orig.lastIndex) {
             flatten_helper(listOf(orig[i]), dest) + flatten_helper(orig.subList(i+1, orig.size))
         } else flatten_helper(listOf(orig[i]), dest)
