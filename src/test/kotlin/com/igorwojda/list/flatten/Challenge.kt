@@ -4,7 +4,34 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 fun flatten(list: List<*>): List<*> {
-    TODO("Add your solution here")
+    return if (list.isEmpty()) list
+    else if (list.all { it !is Collection<*>}) list
+    else {
+        val result = mutableListOf<Any>()
+
+        for (elem in list) {
+            if (elem is Collection<*>) {
+                result.addAll(flatten_helper(listOf(elem)))
+            } else elem?.let {result.add(it)}
+        }
+
+        return result
+    }
+}
+
+fun flatten_helper(orig: List<Any>, dest: MutableList<Any> = mutableListOf<Any>()): List<Any> {
+    if (orig.isEmpty()) return dest.toList()
+    else if (orig.all { it !is Collection<*> }) {
+        if (orig.size == 1) dest.add(orig[0])
+        else dest.addAll(orig)
+        return dest.toList()
+    }else {
+        val i = orig.indexOfFirst { it is Collection<*> }
+        if (i != 0) dest.addAll(orig.subList(0, i))
+        return if (i < orig.lastIndex) {
+            flatten_helper(listOf(orig[i]), dest) + flatten_helper(orig.subList(i+1, orig.size))
+        } else flatten_helper(listOf(orig[i]), dest)
+    }
 }
 
 private class Test {
