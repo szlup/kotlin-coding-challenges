@@ -12,7 +12,7 @@ fun flatten(list: List<*>): List<*> {
         for (elem in list) {
             if (elem is List<*>) {
                 result.addAll(flatten_helper(elem))
-            } else elem?.let {result.add(it)}
+            } else result.add(elem)
         }
 
         return result
@@ -22,16 +22,18 @@ fun flatten(list: List<*>): List<*> {
 fun flatten_helper(orig: List<*>, dest: MutableList<Any?> = mutableListOf<Any?>()): List<*> {
     if (orig.isEmpty()) return dest.toList()
     else if (orig.all { it !is List<*> }) {
-        if (orig.size == 1) orig[0]?.let { dest.add(it) }
-        else dest.addAll(orig)
+        orig.forEach { dest.add(it) }
         return dest.toList()
     }else {
         val i = orig.indexOfFirst { it is List<*> }
+
         if (i != 0) dest.addAll(orig.subList(0, i))
-        dest.addAll(listOf(orig[i]))
-        return if (i < orig.lastIndex) {
-            flatten_helper(listOf(orig[i]), dest) + flatten_helper(orig.subList(i+1, orig.size))
-        } else flatten_helper(listOf(orig[i]), dest)
+        val flattened = flatten_helper(orig[i] as List<*>)
+        dest.addAll(flattened)
+
+        if (i < orig.lastIndex) {
+            return flatten_helper(orig.subList(i+1, orig.size), dest)
+        } else return dest
     }
 }
 
