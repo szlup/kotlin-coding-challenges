@@ -3,8 +3,15 @@ package com.igorwojda.list.search.binarysearch
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
-private fun binarySearch(list: List<Char>, element: Char): Int {
-    TODO("Add your solution here")
+private fun binarySearch(list: List<Char>, element: Char, start: Int = 0, end: Int = list.lastIndex): Int {
+    if (list.isEmpty() || start > end) return -1
+
+    val mid = (start + end) / 2
+
+    return if (element == list[mid]) mid
+    else if (element < list[mid]) binarySearch(list, element, start, mid-1)
+    else binarySearch(list, element, mid+1, end)
+
 }
 
 private class Test {
