@@ -2,8 +2,9 @@ package com.igorwojda.linkedlist.doubly.base
 
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import java.util.function.Consumer
 
-private class DoublyLinkedList<E>() {
+private class DoublyLinkedList<E>(): Iterable<Node<E>> {
     var head: Node<E>? = null
         private set
 
@@ -48,6 +49,21 @@ private class DoublyLinkedList<E>() {
         size++
     }
 
+    fun insertAt(data: E, index: Int) {
+        if (index >= size || index <= -1 || index == size-1) insertLast(data)
+        else if (index == 0) insertFirst(data)
+        else {
+            val nextNode = this.getAt(index)!!
+            val prevNode = nextNode.prev
+
+            val toInsert = Node(data, prevNode, nextNode)
+            nextNode.prev = toInsert
+            prevNode?.next = toInsert
+
+            size++
+        }
+    }
+
     fun clear() {
         size = 0
         head = null
@@ -74,33 +90,110 @@ private class DoublyLinkedList<E>() {
         }
     }
 
-    fun getAt(index: Int): E {
+    fun getAt(index: Int): Node<E>? {
         var result: Node<E>?
 
-        if (index >= size || index < -1) throw IndexOutOfBoundsException("$index is out of bounds")
-        else if (index == 0) result = first
-        else if (index == -1) result = last
-        else {
-            var j = 0
-            result = first
-            while (j < index) {
-                j++
-                result = result!!.next
+        when {
+            index >= size || index < -1 -> return null
+            index == 0 -> result = first
+            index == -1 -> result = last
+            else -> {
+                if (index < size/2) {
+                    var j = 0
+                    result = first
+                    while (j < index) {
+                        j++
+                        result = result!!.next
+                    }
+                }else {
+                    var j = size - 1
+                    result = last
+                    while (j > index) {
+                        j--
+                        result = result!!.prev
+                    }
+                }
             }
         }
 
-        return result!!.data
-
-
+        return result
     }
+
+    fun setAt(data: E, index: Int) {
+        val toAdd = Node(data)
+
+        if (index >= size || index < -1) return
+        else {
+            val toReplace = this.getAt(index)
+            val prevNode = toReplace!!.prev
+            val nextNode = toReplace.next
+
+            prevNode?.next = toAdd
+            toAdd.prev = prevNode
+            nextNode?.prev = toAdd
+            toAdd.next = nextNode
+
+            if (index == 0) head = toAdd
+            if (index == size-1) last = toAdd
+        }
+    }
+
+    fun removeAt(index: Int) {
+        if (index >= size || index < -1) return
+        else {
+            val toRemove = this.getAt(index)!!
+            val prevNode = toRemove.prev
+            val nextNode = toRemove.next
+
+            prevNode?.next = nextNode
+            nextNode?.prev = prevNode
+
+            if(index == 0) head = nextNode
+            if(index == size-1) last = prevNode
+            size--
+        }
+    }
+
+    override fun iterator(): Iterator<Node<E>> {
+        return object : Iterator<Node<E>> {
+            var current = head
+
+            override fun next(): Node<E> {
+                val result = current
+                current = current!!.next
+                return result!!
+            }
+
+            override fun hasNext(): Boolean {
+                return current != null
+            }
+        }
+    }
+
+    operator fun plus(other: DoublyLinkedList<E>): DoublyLinkedList<E> {
+        other.forEach {
+            this.insertLast(it.data)
+        }
+        return this
+    }
+
+//    override fun forEach(action: Consumer<in Node<E>>?) {
+//        val iter = this.iterator()
+//
+//        while (iter.hasNext()) {
+//            iter.next().apply {action}
+//        }
+//    }
+
 }
+
 
 
 
 private data class Node<T>(
     var data: T,
     var prev: Node<T>? = null,
-    var next: Node<T>? = null,
+    var next: Node<T>? = null
 )
 
 private class Test {
@@ -255,269 +348,269 @@ private class Test {
         }
     }
 //
-//    @Test
-//    fun `return the node at given index`() {
-//        DoublyLinkedList<Char>().apply {
-//            getAt(10) shouldBeEqualTo null
+    @Test
+    fun `return the node at given index`() {
+        DoublyLinkedList<Char>().apply {
+            getAt(10) shouldBeEqualTo null
+
+            insertLast('A')
+            insertLast('B')
+            insertLast('C')
+            insertLast('D')
+
+            getAt(0)?.data shouldBeEqualTo 'A'
+            getAt(1)?.data shouldBeEqualTo 'B'
+            getAt(2)?.data shouldBeEqualTo 'C'
+            getAt(3)?.data shouldBeEqualTo 'D'
+            getAt(4)?.data shouldBeEqualTo null
+        }
+    }
 //
-//            insertLast('A')
-//            insertLast('B')
-//            insertLast('C')
-//            insertLast('D')
+    @Test
+    fun `set node data at index 0`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertLast("c")
+            setAt("new", 0)
+            getAt(0)?.data shouldBeEqualTo "new"
+            getAt(1)?.data shouldBeEqualTo "b"
+            getAt(2)?.data shouldBeEqualTo "c"
+        }
+    }
+
+    @Test
+    fun `set node data at index 1`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertLast("c")
+            setAt("new", 1)
+            getAt(0)?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "new"
+            getAt(2)?.data shouldBeEqualTo "c"
+        }
+    }
+
+    @Test
+    fun `set node data at index 2`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertLast("c")
+            setAt("new", 2)
+            getAt(0)?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "b"
+            getAt(2)?.data shouldBeEqualTo "new"
+        }
+    }
+
+    @Test
+    fun `set node data at non existing index`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertLast("c")
+            setAt("new", 3)
+            getAt(0)?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "b"
+            getAt(2)?.data shouldBeEqualTo "c"
+        }
+    }
 //
-//            getAt(0)?.data shouldBeEqualTo 'A'
-//            getAt(1)?.data shouldBeEqualTo 'B'
-//            getAt(2)?.data shouldBeEqualTo 'C'
-//            getAt(3)?.data shouldBeEqualTo 'D'
-//            getAt(4)?.data shouldBeEqualTo null
-//        }
-//    }
+    @Test
+    fun `remove from empty list`() {
+        DoublyLinkedList<Int>().apply {
+            removeAt(0)
+            removeAt(1)
+            removeAt(2)
+        }
+    }
+
+    @Test
+    fun `remove with index out of bounds`() {
+        DoublyLinkedList<String>().apply {
+            insertFirst("a")
+            removeAt(1)
+        }
+    }
+
+    @Test
+    fun `remove the first node`() {
+        DoublyLinkedList<Int>().apply {
+            insertLast(1)
+            insertLast(2)
+            insertLast(3)
+            insertLast(4)
+            getAt(0)?.data shouldBeEqualTo 1
+            removeAt(0)
+            getAt(0)?.data shouldBeEqualTo 2
+            getAt(0)?.prev shouldBeEqualTo null
+            getAt(0)?.next?.data shouldBeEqualTo 3
+            getAt(1)?.data shouldBeEqualTo 3
+        }
+    }
+
+    @Test
+    fun `remove the node at given index`() {
+        DoublyLinkedList<Int>().apply {
+            insertLast(1)
+            insertLast(2)
+            insertLast(3)
+            insertLast(4)
+            getAt(1)?.data shouldBeEqualTo 2
+            removeAt(1)
+            getAt(0)?.data shouldBeEqualTo 1
+            getAt(0)?.next?.data shouldBeEqualTo 3
+            getAt(1)?.data shouldBeEqualTo 3
+            getAt(1)?.prev?.data shouldBeEqualTo 1
+            getAt(1)?.next?.data shouldBeEqualTo 4
+            getAt(2)?.data shouldBeEqualTo 4
+            getAt(2)?.prev?.data shouldBeEqualTo 3
+
+        }
+    }
+
+    @Test
+    fun `remove the last node`() {
+        DoublyLinkedList<Int>().apply {
+            insertLast(1)
+            insertLast(2)
+            insertLast(3)
+            insertLast(4)
+            getAt(3)?.data shouldBeEqualTo 4
+            removeAt(3)
+            getAt(1)?.data shouldBeEqualTo 2
+            getAt(1)?.next?.data shouldBeEqualTo 3
+            getAt(2)?.data shouldBeEqualTo 3
+            getAt(2)?.next shouldBeEqualTo null
+            getAt(2)?.prev?.data shouldBeEqualTo 2
+            getAt(3) shouldBeEqualTo null
+        }
+    }
 //
-//    @Test
-//    fun `set node data at index 0`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertLast("c")
-//            setAt("new", 0)
-//            getAt(0)?.data shouldBeEqualTo "new"
-//            getAt(1)?.data shouldBeEqualTo "b"
-//            getAt(2)?.data shouldBeEqualTo "c"
-//        }
-//    }
+    @Test
+    fun `insert a new node with data at index 0 when the list is empty`() {
+        DoublyLinkedList<String>().apply {
+            insertAt("hi", 0)
+            first?.data shouldBeEqualTo "hi"
+            first?.prev shouldBeEqualTo null
+            first?.next shouldBeEqualTo null
+        }
+    }
+
+    @Test
+    fun `insert a new node with data at index 0 when the list has elements`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertLast("c")
+            insertAt("hi", 0)
+            getAt(0)?.data shouldBeEqualTo "hi"
+            getAt(0)?.prev shouldBeEqualTo null
+            getAt(0)?.next?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "a"
+            getAt(1)?.prev?.data shouldBeEqualTo "hi"
+            getAt(2)?.data shouldBeEqualTo "b"
+            getAt(3)?.data shouldBeEqualTo "c"
+        }
+    }
+
+    @Test
+    fun `insert a new node with data at a middle index`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertLast("c")
+            insertLast("d")
+            insertAt("hi", 2)
+            getAt(0)?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "b"
+            getAt(1)?.next?.data shouldBeEqualTo "hi"
+            getAt(2)?.prev?.data shouldBeEqualTo "b"
+            getAt(2)?.data shouldBeEqualTo "hi"
+            getAt(2)?.next?.data shouldBeEqualTo "c"
+            getAt(3)?.prev?.data shouldBeEqualTo "hi"
+            getAt(3)?.data shouldBeEqualTo "c"
+            getAt(4)?.data shouldBeEqualTo "d"
+        }
+    }
+
+    @Test
+    fun `inserts a new node with data at a last index`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertAt("hi", 2)
+            getAt(0)?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "b"
+            getAt(1)?.next?.data shouldBeEqualTo "hi"
+            getAt(2)?.prev?.data shouldBeEqualTo "b"
+            getAt(2)?.data shouldBeEqualTo "hi"
+            getAt(2)?.next?.data shouldBeEqualTo null
+        }
+    }
+
+    @Test
+    fun `insert a new node when index is out of bounds`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            insertLast("b")
+            insertAt("hi", 30)
+
+            getAt(0)?.data shouldBeEqualTo "a"
+            getAt(1)?.data shouldBeEqualTo "b"
+            getAt(1)?.next?.data shouldBeEqualTo "hi"
+            getAt(2)?.data shouldBeEqualTo "hi"
+            getAt(2)?.prev?.data shouldBeEqualTo "b"
+        }
+    }
 //
-//    @Test
-//    fun `set node data at index 1`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertLast("c")
-//            setAt("new", 1)
-//            getAt(0)?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "new"
-//            getAt(2)?.data shouldBeEqualTo "c"
-//        }
-//    }
+    @Test
+    fun `sum all the nodes`() {
+        DoublyLinkedList<Int>().apply {
+            insertLast(1)
+            insertLast(2)
+            insertLast(3)
+            insertLast(4)
+
+            sumOf { it.data } shouldBeEqualTo 10
+        }
+    }
 //
-//    @Test
-//    fun `set node data at index 2`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertLast("c")
-//            setAt("new", 2)
-//            getAt(0)?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "b"
-//            getAt(2)?.data shouldBeEqualTo "new"
-//        }
-//    }
-//
-//    @Test
-//    fun `set node data at non existing index`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertLast("c")
-//            setAt("new", 3)
-//            getAt(0)?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "b"
-//            getAt(2)?.data shouldBeEqualTo "c"
-//        }
-//    }
-//
-//    @Test
-//    fun `remove from empty list`() {
-//        DoublyLinkedList<Int>().apply {
-//            removeAt(0)
-//            removeAt(1)
-//            removeAt(2)
-//        }
-//    }
-//
-//    @Test
-//    fun `remove with index out of bounds`() {
-//        DoublyLinkedList<String>().apply {
-//            insertFirst("a")
-//            removeAt(1)
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the first node`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertLast(1)
-//            insertLast(2)
-//            insertLast(3)
-//            insertLast(4)
-//            getAt(0)?.data shouldBeEqualTo 1
-//            removeAt(0)
-//            getAt(0)?.data shouldBeEqualTo 2
-//            getAt(0)?.prev shouldBeEqualTo null
-//            getAt(0)?.next?.data shouldBeEqualTo 3
-//            getAt(1)?.data shouldBeEqualTo 3
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the node at given index`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertLast(1)
-//            insertLast(2)
-//            insertLast(3)
-//            insertLast(4)
-//            getAt(1)?.data shouldBeEqualTo 2
-//            removeAt(1)
-//            getAt(0)?.data shouldBeEqualTo 1
-//            getAt(0)?.next?.data shouldBeEqualTo 3
-//            getAt(1)?.data shouldBeEqualTo 3
-//            getAt(1)?.prev?.data shouldBeEqualTo 1
-//            getAt(1)?.next?.data shouldBeEqualTo 4
-//            getAt(2)?.data shouldBeEqualTo 4
-//            getAt(2)?.prev?.data shouldBeEqualTo 3
-//
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the last node`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertLast(1)
-//            insertLast(2)
-//            insertLast(3)
-//            insertLast(4)
-//            getAt(3)?.data shouldBeEqualTo 4
-//            removeAt(3)
-//            getAt(1)?.data shouldBeEqualTo 2
-//            getAt(1)?.next?.data shouldBeEqualTo 3
-//            getAt(2)?.data shouldBeEqualTo 3
-//            getAt(2)?.next shouldBeEqualTo null
-//            getAt(2)?.prev?.data shouldBeEqualTo 2
-//            getAt(3) shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `insert a new node with data at index 0 when the list is empty`() {
-//        DoublyLinkedList<String>().apply {
-//            insertAt("hi", 0)
-//            first?.data shouldBeEqualTo "hi"
-//            first?.prev shouldBeEqualTo null
-//            first?.next shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `insert a new node with data at index 0 when the list has elements`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertLast("c")
-//            insertAt("hi", 0)
-//            getAt(0)?.data shouldBeEqualTo "hi"
-//            getAt(0)?.prev shouldBeEqualTo null
-//            getAt(0)?.next?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "a"
-//            getAt(1)?.prev?.data shouldBeEqualTo "hi"
-//            getAt(2)?.data shouldBeEqualTo "b"
-//            getAt(3)?.data shouldBeEqualTo "c"
-//        }
-//    }
-//
-//    @Test
-//    fun `insert a new node with data at a middle index`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertLast("c")
-//            insertLast("d")
-//            insertAt("hi", 2)
-//            getAt(0)?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "b"
-//            getAt(1)?.next?.data shouldBeEqualTo "hi"
-//            getAt(2)?.prev?.data shouldBeEqualTo "b"
-//            getAt(2)?.data shouldBeEqualTo "hi"
-//            getAt(2)?.next?.data shouldBeEqualTo "c"
-//            getAt(3)?.prev?.data shouldBeEqualTo "hi"
-//            getAt(3)?.data shouldBeEqualTo "c"
-//            getAt(4)?.data shouldBeEqualTo "d"
-//        }
-//    }
-//
-//    @Test
-//    fun `inserts a new node with data at a last index`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertAt("hi", 2)
-//            getAt(0)?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "b"
-//            getAt(1)?.next?.data shouldBeEqualTo "hi"
-//            getAt(2)?.prev?.data shouldBeEqualTo "b"
-//            getAt(2)?.data shouldBeEqualTo "hi"
-//            getAt(2)?.next?.data shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `insert a new node when index is out of bounds`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            insertLast("b")
-//            insertAt("hi", 30)
-//
-//            getAt(0)?.data shouldBeEqualTo "a"
-//            getAt(1)?.data shouldBeEqualTo "b"
-//            getAt(1)?.next?.data shouldBeEqualTo "hi"
-//            getAt(2)?.data shouldBeEqualTo "hi"
-//            getAt(2)?.prev?.data shouldBeEqualTo "b"
-//        }
-//    }
-//
-//    @Test
-//    fun `sum all the nodes`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertLast(1)
-//            insertLast(2)
-//            insertLast(3)
-//            insertLast(4)
-//
-//            sumBy { it.data } shouldBeEqualTo 10
-//        }
-//    }
-//
-//    @Test
-//    fun `add two empty lists`() {
-//        val l1 = DoublyLinkedList<Int>()
-//        val l2 = DoublyLinkedList<Int>()
-//        val result = l1 + l2
-//
-//        result.size shouldBeEqualTo 0
-//    }
-//
-//    @Test
-//    fun `add two lists`() {
-//        val l1 = DoublyLinkedList<Int>().apply {
-//            insertLast(1)
-//            insertLast(2)
-//            insertLast(3)
-//        }
-//        val l2 = DoublyLinkedList<Int>().apply {
-//            insertLast(4)
-//            insertLast(5)
-//            insertLast(6)
-//            insertLast(7)
-//        }
-//        val result = l1 + l2
-//
-//        result.apply {
-//            size shouldBeEqualTo 7
-//            getAt(0)?.data shouldBeEqualTo 1
-//            getAt(1)?.data shouldBeEqualTo 2
-//            getAt(2)?.data shouldBeEqualTo 3
-//            getAt(3)?.data shouldBeEqualTo 4
-//            getAt(4)?.data shouldBeEqualTo 5
-//            getAt(5)?.data shouldBeEqualTo 6
-//            getAt(6)?.data shouldBeEqualTo 7
-//        }
-//    }
+    @Test
+    fun `add two empty lists`() {
+        val l1 = DoublyLinkedList<Int>()
+        val l2 = DoublyLinkedList<Int>()
+        val result = l1 + l2
+
+        result.size shouldBeEqualTo 0
+    }
+
+    @Test
+    fun `add two lists`() {
+        val l1 = DoublyLinkedList<Int>().apply {
+            insertLast(1)
+            insertLast(2)
+            insertLast(3)
+        }
+        val l2 = DoublyLinkedList<Int>().apply {
+            insertLast(4)
+            insertLast(5)
+            insertLast(6)
+            insertLast(7)
+        }
+        val result = l1 + l2
+
+        result.apply {
+            size shouldBeEqualTo 7
+            getAt(0)?.data shouldBeEqualTo 1
+            getAt(1)?.data shouldBeEqualTo 2
+            getAt(2)?.data shouldBeEqualTo 3
+            getAt(3)?.data shouldBeEqualTo 4
+            getAt(4)?.data shouldBeEqualTo 5
+            getAt(5)?.data shouldBeEqualTo 6
+            getAt(6)?.data shouldBeEqualTo 7
+        }
+    }
 }
