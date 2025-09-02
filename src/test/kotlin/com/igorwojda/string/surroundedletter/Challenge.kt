@@ -4,7 +4,9 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun surroundedLetter(str: String): Boolean {
-    TODO("Add your solution here")
+    if(str.isEmpty() || "+" !in str) return false
+
+    return str.matches(Regex("\\++\\w\\++(\\+*\\w\\++)*"))
 }
 
 private class Test {
