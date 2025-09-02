@@ -1,8 +1,101 @@
 package com.igorwojda.linkedlist.doubly.base
 
-private class DoublyLinkedList<E> {
-    // Add your solution here
+import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Test
+
+private class DoublyLinkedList<E>() {
+    var head: Node<E>? = null
+        private set
+
+    var first = head
+        get() {
+            field = head
+            return field
+        }
+        private set
+
+    var last = head
+        private set
+
+    var size = 0
+        private set
+
+
+    fun insertFirst(data: E) {
+        if (head == null) {
+            head = Node(data)
+            last = head
+        }
+        else {
+            val prevHead = head
+            head = Node(data)
+            head!!.next = prevHead
+            prevHead!!.prev = head
+        }
+        size++
+    }
+
+    fun insertLast(data: E) {
+        if (head == null) {
+            head = Node(data)
+            last = head
+        }else {
+            val prevLast = last
+            last = Node(data)
+            last!!.prev = prevLast
+            prevLast!!.next = last
+        }
+        size++
+    }
+
+    fun clear() {
+        size = 0
+        head = null
+        last = null
+    }
+
+    fun removeFirst() {
+        if (size == 0) return
+        else if (size == 1) this.clear()
+        else {
+            head = head!!.next
+            head!!.prev = null
+            size--
+        }
+    }
+
+    fun removeLast() {
+        if (size == 0) return
+        else if (size == 1) this.clear()
+        else {
+            last = last!!.prev
+            last!!.next = null
+            size--
+        }
+    }
+
+    fun getAt(index: Int): E {
+        var result: Node<E>?
+
+        if (index >= size || index < -1) throw IndexOutOfBoundsException("$index is out of bounds")
+        else if (index == 0) result = first
+        else if (index == -1) result = last
+        else {
+            var j = 0
+            result = first
+            while (j < index) {
+                j++
+                result = result!!.next
+            }
+        }
+
+        return result!!.data
+
+
+    }
 }
+
+
 
 private data class Node<T>(
     var data: T,
@@ -11,156 +104,156 @@ private data class Node<T>(
 )
 
 private class Test {
-//    @Test
-//    fun `when list is created head node is null`() {
-//        DoublyLinkedList<Int>().apply {
-//            head shouldBeEqualTo null
-//        }
-//    }
+    @Test
+    fun `when list is created head node is null`() {
+        DoublyLinkedList<Int>().apply {
+            head shouldBeEqualTo null
+        }
+    }
 //
-//    @Test
-//    fun `append a node to the start of the list`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertFirst(1)
-//            head?.data shouldBeEqualTo 1
-//            head?.next shouldBeEqualTo null
-//            insertFirst(2)
-//            head?.data shouldBeEqualTo 2
-//            head?.next?.prev shouldBeEqualTo head
-//            head?.next?.data shouldBeEqualTo 1
-//        }
-//    }
+    @Test
+    fun `append a node to the start of the list`() {
+        DoublyLinkedList<Int>().apply {
+            insertFirst(1)
+            head?.data shouldBeEqualTo 1
+            head?.next shouldBeEqualTo null
+            insertFirst(2)
+            head?.data shouldBeEqualTo 2
+            head?.next?.prev shouldBeEqualTo head
+            head?.next?.data shouldBeEqualTo 1
+        }
+    }
 //
-//    @Test
-//    fun `return the number of items in the linked list`() {
-//        DoublyLinkedList<Int>().apply {
-//            size shouldBeEqualTo 0
-//            insertFirst(1)
-//            insertFirst(1)
-//            insertFirst(1)
-//            insertFirst(1)
-//            size shouldBeEqualTo 4
-//        }
-//    }
+    @Test
+    fun `return the number of items in the linked list`() {
+        DoublyLinkedList<Int>().apply {
+            size shouldBeEqualTo 0
+            insertFirst(1)
+            insertFirst(1)
+            insertFirst(1)
+            insertFirst(1)
+            size shouldBeEqualTo 4
+        }
+    }
+
+    @Test
+    fun `return the first element`() {
+        DoublyLinkedList<Int>().apply {
+            insertFirst(1)
+            first?.data shouldBeEqualTo 1
+            insertFirst(2)
+            first?.data shouldBeEqualTo 2
+        }
+    }
+
+    @Test
+    fun `return the last element`() {
+        DoublyLinkedList<Int>().apply {
+            insertFirst(2)
+            last?.data shouldBeEqualTo 2
+            last?.next shouldBeEqualTo null
+            insertFirst(1)
+            last?.data shouldBeEqualTo 2
+            last?.next shouldBeEqualTo null
+        }
+    }
 //
-//    @Test
-//    fun `return the first element`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertFirst(1)
-//            first?.data shouldBeEqualTo 1
-//            insertFirst(2)
-//            first?.data shouldBeEqualTo 2
-//        }
-//    }
+    @Test
+    fun `empty the list`() {
+        DoublyLinkedList<Int>().apply {
+            size shouldBeEqualTo 0
+            insertFirst(1)
+            insertFirst(1)
+            insertFirst(1)
+            insertFirst(1)
+            size shouldBeEqualTo 4
+            clear()
+            size shouldBeEqualTo 0
+        }
+    }
 //
-//    @Test
-//    fun `return the last element`() {
-//        DoublyLinkedList<Int>().apply {
-//            insertFirst(2)
-//            last?.data shouldBeEqualTo 2
-//            last?.next shouldBeEqualTo null
-//            insertFirst(1)
-//            last?.data shouldBeEqualTo 2
-//            last?.next shouldBeEqualTo null
-//        }
-//    }
+    @Test
+    fun `remove the first node when the list has a size of one`() {
+        DoublyLinkedList<String>().apply {
+            insertFirst("a")
+            removeFirst()
+            size shouldBeEqualTo 0
+            first shouldBeEqualTo null
+        }
+    }
+
+    @Test
+    fun `remove the first node when the list has a size of three`() {
+        DoublyLinkedList<String>().apply {
+            insertFirst("c")
+            insertFirst("b")
+            insertFirst("a")
+            removeFirst()
+            size shouldBeEqualTo 2
+            first?.data shouldBeEqualTo "b"
+            first?.prev shouldBeEqualTo null
+            removeFirst()
+            size shouldBeEqualTo 1
+            first?.data shouldBeEqualTo "c"
+            first?.prev shouldBeEqualTo null
+        }
+    }
 //
-//    @Test
-//    fun `empty the list`() {
-//        DoublyLinkedList<Int>().apply {
-//            size shouldBeEqualTo 0
-//            insertFirst(1)
-//            insertFirst(1)
-//            insertFirst(1)
-//            insertFirst(1)
-//            size shouldBeEqualTo 4
-//            clear()
-//            size shouldBeEqualTo 0
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the first node when the list has a size of one`() {
-//        DoublyLinkedList<String>().apply {
-//            insertFirst("a")
-//            removeFirst()
-//            size shouldBeEqualTo 0
-//            first shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the first node when the list has a size of three`() {
-//        DoublyLinkedList<String>().apply {
-//            insertFirst("c")
-//            insertFirst("b")
-//            insertFirst("a")
-//            removeFirst()
-//            size shouldBeEqualTo 2
-//            first?.data shouldBeEqualTo "b"
-//            first?.prev shouldBeEqualTo null
-//            removeFirst()
-//            size shouldBeEqualTo 1
-//            first?.data shouldBeEqualTo "c"
-//            first?.prev shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the last node when list is empty`() {
-//        DoublyLinkedList<Any>().apply {
-//            removeLast()
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the last node when list is length 1`() {
-//        DoublyLinkedList<String>().apply {
-//            insertFirst("a")
-//            removeLast()
-//            head shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the last node when list is length 2`() {
-//        DoublyLinkedList<String>().apply {
-//            insertFirst("b")
-//            insertFirst("a")
-//            removeLast()
-//            size shouldBeEqualTo 1
-//            head?.data shouldBeEqualTo "a"
-//            last?.next shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `remove the last node when list is length 3`() {
-//        DoublyLinkedList<String>().apply {
-//            insertFirst("c")
-//            insertFirst("b")
-//            insertFirst("a")
-//            removeLast()
-//            size shouldBeEqualTo 2
-//            last?.data shouldBeEqualTo "b"
-//            last?.next shouldBeEqualTo null
-//        }
-//    }
-//
-//    @Test
-//    fun `add to the end of the list`() {
-//        DoublyLinkedList<String>().apply {
-//            insertLast("a")
-//            size shouldBeEqualTo 1
-//            head?.data shouldBeEqualTo "a"
-//
-//            insertLast("b")
-//            size shouldBeEqualTo 2
-//            last?.data shouldBeEqualTo "b"
-//            last?.prev?.data shouldBeEqualTo "a"
-//            head?.data shouldBeEqualTo "a"
-//        }
-//    }
+    @Test
+    fun `remove the last node when list is empty`() {
+        DoublyLinkedList<Any>().apply {
+            removeLast()
+        }
+    }
+
+    @Test
+    fun `remove the last node when list is length 1`() {
+        DoublyLinkedList<String>().apply {
+            insertFirst("a")
+            removeLast()
+            head shouldBeEqualTo null
+        }
+    }
+
+    @Test
+    fun `remove the last node when list is length 2`() {
+        DoublyLinkedList<String>().apply {
+            insertFirst("b")
+            insertFirst("a")
+            removeLast()
+            size shouldBeEqualTo 1
+            head?.data shouldBeEqualTo "a"
+            last?.next shouldBeEqualTo null
+        }
+    }
+
+    @Test
+    fun `remove the last node when list is length 3`() {
+        DoublyLinkedList<String>().apply {
+            insertFirst("c")
+            insertFirst("b")
+            insertFirst("a")
+            removeLast()
+            size shouldBeEqualTo 2
+            last?.data shouldBeEqualTo "b"
+            last?.next shouldBeEqualTo null
+        }
+    }
+
+    @Test
+    fun `add to the end of the list`() {
+        DoublyLinkedList<String>().apply {
+            insertLast("a")
+            size shouldBeEqualTo 1
+            head?.data shouldBeEqualTo "a"
+
+            insertLast("b")
+            size shouldBeEqualTo 2
+            last?.data shouldBeEqualTo "b"
+            last?.prev?.data shouldBeEqualTo "a"
+            head?.data shouldBeEqualTo "a"
+        }
+    }
 //
 //    @Test
 //    fun `return the node at given index`() {
