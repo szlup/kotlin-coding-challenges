@@ -7,20 +7,82 @@ private class MaxBinaryHeap<E : Comparable<E>> {
     val items = mutableListOf<E>()
 
     fun add(element: E) {
-        TODO("Add your solution here")
+        items.add(element)
+
+        if (items.size == 1) return
+        else bubbleUp(items.lastIndex)
+    }
+
+    //moves an item at the specified index up to the correct level of the tree
+    fun bubbleUp(index: Int) {
+        if (index == 0 || index !in 0..items.lastIndex) return
+
+        var i = index
+        var parent = getParentIndex(i)
+        while (items[i] > items[parent]) {
+            items.swap(i, parent)
+            i = parent
+            parent = getParentIndex(i)
+        }
+    }
+
+    //moves an item at the specified index down to the correct position in the tree
+    fun siftDown(index: Int) {
+        if (index == items.lastIndex || index !in 0..items.lastIndex) return
+
+        var i = index
+        var leftIndex = getLeftChildIndex(i)
+        var rightIndex = getRightChildIndex(i)
+        var left = items.getOrNull(leftIndex)
+        var right = items.getOrNull(rightIndex)
+        while ((left != null && items[i] < left) || (right != null && items[i] < right)) {
+            when {
+                left == null -> {
+                    items.swap(i, rightIndex)
+                    i = rightIndex
+                }
+                right == null -> {
+                    items.swap(i, leftIndex)
+                    i = leftIndex
+                }
+                right > left -> {
+                    items.swap(i, rightIndex)
+                    i = rightIndex
+                }
+                left > right -> {
+                    items.swap(i, leftIndex)
+                    i = leftIndex
+                }
+            }
+            leftIndex = getLeftChildIndex(i)
+            rightIndex = getRightChildIndex(i)
+            left = items.getOrNull(leftIndex)
+            right = items.getOrNull(rightIndex)
+        }
     }
 
     fun removeMax(): E? {
-        TODO("Add your solution here")
+        if (this.isEmpty()) return null
+        else if (items.size < 3) return items.removeAt(0)
+
+        //swap root with last element, remove, then sift down
+        items.swap(0, items.lastIndex)
+        val result = items.removeLast()
+        this.siftDown(0)
+
+        return result
     }
 
-    private fun getParentIndex(index: Int): Int = TODO("Add your solution here")
+    // formula: (i−1)/2 for index i (using integer division)
+    private fun getParentIndex(index: Int): Int = (index - 1) / 2
 
-    private fun getLeftChildIndex(index: Int): Int = TODO("Add your solution here")
+    // formula: 2i + 1 for parent node index i
+    private fun getLeftChildIndex(index: Int): Int = (index * 2) + 1
 
-    private fun getRightChildIndex(index: Int): Int = TODO("Add your solution here")
+    // formula: 2i + 2 for parent node index i
+    private fun getRightChildIndex(index: Int): Int = (index * 2) + 2
 
-    fun isEmpty(): Boolean = TODO("Add your solution here")
+    fun isEmpty(): Boolean = items.isEmpty()
 
     private fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
         val tmp = this[index1]
