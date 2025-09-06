@@ -12,7 +12,7 @@ private fun addTwoNumbers(l1: ListNode?, l2: ListNode?): ListNode? {
     when {
         l1 == null && l2 == null -> return null
         l1 != null && l2 == null -> return l1
-        l2 == null && l2 != null -> return l2
+        l1 == null && l2 != null -> return l2
         else -> {
             var n1 = l1
             var n2 = l2
