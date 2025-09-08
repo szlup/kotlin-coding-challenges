@@ -1,7 +1,67 @@
 package com.igorwojda.linkedlist.singly.base
 
 private class SinglyLinkedList<E> {
-    // Add your solution here
+    var head: Node<E>? = null
+        private set
+
+    var size = 0
+        private set
+
+    var first: Node<E>? = head
+        get() {
+            field = head
+            return field
+        }
+        private set
+
+    var last: Node<E>? = head
+        private set
+
+    fun insertFirst(data: E) {
+        val toAdd = Node(data)
+        if (head == null) head = toAdd
+        else {
+            toAdd.next = head
+            head = toAdd
+        }
+        size++
+    }
+
+    fun clear() {
+        head = null
+        last = null
+        size = 0
+    }
+
+    fun isEmpty() = this.size == 0
+
+    fun removeFirst() {
+        if (this.isEmpty()) return
+        else {
+            head = head!!.next
+            size--
+        }
+    }
+
+    fun removeLast() {
+        if (this.isEmpty()) return
+        else if (this.size == 1) this.clear()
+        else {
+            var prev: Node<E>? = head
+            var current = head
+            while (current!!.next != null) {
+                prev = current
+                current = current.next
+            }
+
+            last = prev
+            last!!.next = null
+            size--
+        }
+    }
+
+
+
 }
 
 private data class Node<T>(
