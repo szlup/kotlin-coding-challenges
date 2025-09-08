@@ -3,9 +3,40 @@ package com.igorwojda.list.listchunk
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
+// approach 1
 private fun chunk(list: List<Int>, size: Int): List<List<Int>> {
-    TODO("Add your solution here")
+    val result = mutableListOf<List<Int>>()
+
+    var count = 0
+    var toAdd = mutableListOf<Int>()
+    for (num in list) {
+        toAdd.add(num)
+        count++
+        if (count >= size) {
+            result.add(toAdd)
+            toAdd = mutableListOf<Int>()
+            count = 0
+        }
+    }
+
+    if (toAdd.isNotEmpty()) result.add(toAdd)
+
+    return result
 }
+
+//approach 2 (apparently this is slower!)
+//private fun chunk(list: List<Int>, size: Int): List<List<Int>> {
+//    val result = mutableListOf<List<Int>>()
+//
+//    var start = 0
+//    while (start <= list.lastIndex) {
+//        val end = if (start + size <= list.lastIndex) start + size else list.lastIndex + 1
+//        result.add(list.subList(start, end))
+//        start = end
+//    }
+//
+//    return result
+//}
 
 private class Test {
     @Test
