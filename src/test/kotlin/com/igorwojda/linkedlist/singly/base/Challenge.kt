@@ -1,6 +1,8 @@
 package com.igorwojda.linkedlist.singly.base
 
-private class SinglyLinkedList<E> {
+import com.igorwojda.linkedlist.doubly.base.DoublyLinkedList
+
+private class SinglyLinkedList<E>: Iterable<Node<E>> {
     var head: Node<E>? = null
         private set
 
@@ -35,17 +37,22 @@ private class SinglyLinkedList<E> {
 
     fun isEmpty() = this.size == 0
 
-    fun removeFirst() {
-        if (this.isEmpty()) return
+    fun removeFirst(): Node<E>? {
+        if (this.isEmpty()) return null
         else {
+            val result = head
             head = head!!.next
             size--
+            return result
         }
     }
 
-    fun removeLast() {
-        if (this.isEmpty()) return
-        else if (this.size == 1) this.clear()
+    fun removeLast(): Node<E>? {
+        if (this.isEmpty()) return null
+        else if (this.size == 1) {
+            this.clear()
+            return null
+        }
         else {
             var prev: Node<E>? = head
             var current = head
@@ -57,7 +64,97 @@ private class SinglyLinkedList<E> {
             last = prev
             last!!.next = null
             size--
+            return current
         }
+    }
+
+    fun insertLast(data: E) {
+        val toAdd = Node(data)
+        if (last == null) {
+            head = toAdd
+            last = toAdd
+        }else {
+            last!!.next = toAdd
+            last = toAdd
+        }
+
+        size++
+    }
+
+    fun getAt(index: Int): Node<E>? {
+        if (index >= this.size || index < -1) return null
+        else if (index == 0) return head
+        else if (index == this.size - 1 || index == -1) return last
+        else {
+            var i = 0
+            var current = head
+            while (i < index) {
+                current = current!!.next
+                i++
+            }
+
+            return current
+        }
+    }
+
+    fun setAt(data: E, index: Int) {
+        if (index >= this.size || index < -1) return
+        else {
+            val toUpdate = this.getAt(index)
+            toUpdate!!.data = data
+        }
+    }
+
+    fun removeAt(index: Int): Node<E>? {
+        if (index >= this.size || index < -1) return null
+        else if (index == 0) return this.removeFirst()
+        else if (index == this.size - 1 || index == -1) return this.removeLast()
+        else {
+            val prev = this.getAt(index - 1)
+            val toRemove = prev!!.next
+            val next = toRemove!!.next
+
+            prev.next = next
+
+            size--
+            return toRemove
+        }
+    }
+
+    fun insertAt(data:E, index: Int) {
+        if (index >= this.size || index < -1) return
+        else if (index == 0) this.insertFirst(data)
+        else if (index == this.size - 1 || index == -1) this.insertLast(data)
+        else {
+            val prev = this.getAt(index - 1)
+            val next = prev!!.next
+
+            prev.next = Node(data, next)
+            size++
+        }
+    }
+
+    override fun iterator(): Iterator<Node<E>> {
+        return object : Iterator<Node<E>> {
+            var current = head
+
+            override fun next(): Node<E> {
+                val result = current
+                current = current!!.next
+                return result!!
+            }
+
+            override fun hasNext(): Boolean {
+                return current != null
+            }
+        }
+    }
+
+    operator fun plus(other: SinglyLinkedList<E>): SinglyLinkedList<E> {
+        other.forEach {
+            this.insertLast(it.data)
+        }
+        return this
     }
 
 
