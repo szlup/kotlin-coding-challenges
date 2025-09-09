@@ -6,7 +6,25 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun midpoint(list: SinglyLinkedList<Char>): Node<Char>? {
-    TODO("Add your solution here")
+    if (list.first == null) return null
+    else {
+        val slow: Node<Char>? = list.first!!.next
+        var fast: Node<Char>? = list.first!!.next?.next
+        if (slow == null || fast == null) return list.first
+
+        var result = list.first
+        var inc = false
+        list.forEach {
+            fast = it.next?.next
+            if (inc) {
+                result = result!!.next
+                inc = false
+            }else if (fast == null) inc = false
+            else inc = true
+        }
+
+        return result
+    }
 }
 
 private class Test {
