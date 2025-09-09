@@ -6,7 +6,20 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun circularCheck(list: SinglyLinkedList<Char>): Boolean {
-    TODO("Add your solution here")
+    if (list.first == null) return false
+    else {
+        var slow = list.first
+        var fast = list.first
+
+        list.forEach {
+            slow = slow?.next
+            fast = fast?.next?.next
+            if (slow == null || fast == null) return false
+            else if (slow == fast) return true
+        }
+
+        return false
+    }
 }
 
 private class Test {
