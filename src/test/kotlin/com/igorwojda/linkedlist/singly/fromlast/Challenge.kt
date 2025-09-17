@@ -6,8 +6,18 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun fromLast(list: SinglyLinkedList<Char>, endIndex: Int): Node<Char>? {
-    TODO("Add your solution here")
+    if (list.first == null) return null
+    else {
+        var result = list.last
+        repeat(endIndex) {
+            list.removeLast()
+            result = list.last
+        }
+        return result
+    }
 }
+
+
 
 private class Test {
     @Test
