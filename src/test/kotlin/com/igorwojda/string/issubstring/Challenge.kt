@@ -4,7 +4,25 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun isSubstring(str: String, subStr: String): Boolean {
-    TODO("Add your solution here")
+    when {
+        str.isEmpty() && subStr.isEmpty() -> return true
+        str.isNotEmpty() && subStr.isEmpty() -> return true
+        str.isEmpty() && subStr.isNotEmpty() -> return false
+        subStr.length > str.length -> return false
+        subStr.length == str.length -> return str == subStr
+        else -> {
+            var start = 0
+            var end = subStr.length
+            while (end <= str.length) {
+                if (str.substring(start, end) == subStr) return true
+                else {
+                    start++
+                    end++
+                }
+            }
+            return false
+        }
+    }
 }
 
 private class Test {
