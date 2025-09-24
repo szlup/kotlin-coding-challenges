@@ -4,8 +4,14 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun fibonacci(n: Int): Int {
-    TODO("Add your solution here")
+    return when (n) {
+        0 -> 0
+        1 -> 1
+        2 -> 1
+        else -> fibonacci(n-1) + fibonacci((n-2))
+    }
 }
+
 
 private class Test {
     @Test
