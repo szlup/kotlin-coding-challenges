@@ -4,7 +4,33 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 fun minSubListLength(list: List<Int>, sum: Int): Int {
-    TODO("Add your solution here")
+    //loop through list, and add up elements
+    //if an element is greater than sum, start a new list
+    //otherwise add to sublist until you hit sum, then store length and start again
+    //return length at the end
+    var tempSum = 0
+    val tempList = mutableListOf<Int>()
+    var minLength: Int? = null
+    var i = 0
+    var j = i
+
+    while (j < list.size) {
+        if (list[j] > sum) {
+            return 1
+        }
+        tempList.add(list[j])
+        tempSum += list[j]
+
+        if (tempSum >= sum) {
+            minLength = min(tempList.size, minLength)
+            i++
+            j = i
+            tempSum = 0
+            tempList.clear()
+        }else j++
+    }
+
+    return minLength ?: 0
 }
 
 private fun min(i1: Int?, i2: Int?): Int? {
