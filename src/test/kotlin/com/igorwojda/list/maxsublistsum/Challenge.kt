@@ -5,7 +5,21 @@ import org.junit.jupiter.api.Test
 import kotlin.math.max
 
 private fun maxSubListSum(list: List<Int>, numElements: Int): Int? {
-    TODO("Add your solution here")
+    if (list.isEmpty()) return null
+    else if (numElements >= list.size) return list.sum()
+    else {
+        var maxSum: Int? = null
+        var start = 0
+        var end = numElements
+
+        while (end <= list.size) {
+            maxSum = max(list.subList(start, end).sum(), maxSum)
+            start++
+            end++
+        }
+
+        return maxSum
+    }
 }
 
 private fun max(i1: Int?, i2: Int?): Int? {
