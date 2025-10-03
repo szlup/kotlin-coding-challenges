@@ -4,12 +4,33 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun getCoins(amount: Int, coins: List<Int>): Int {
-    TODO("Add your solution here")
+    if (coins.isEmpty()) return 0
+    else if (coins.all { it > amount }) return 1
+    else {
+        var result = 0
+        val tempList = mutableListOf<Int>()
+        var tempSum = 0
+        var i = 0
+        while (i < coins.size) {
+            var current = coins[i]
+            while (tempSum + current <= amount) {
+                tempList.add(current)
+                tempSum += current
+            }
+            if (tempSum == amount) result++
+
+            while (tempSum + coins[i+1] > amount) {
+                tempSum -= tempList.removeLast()
+            }
+
+
+        }
+    }
 }
 
 private class Test {
     @Test
-    fun `4 wys`() {
+    fun `4 ways`() {
         val actual: Int = getCoins(4, listOf(1, 2, 3))
         val expected = 4
         actual shouldBeEqualTo expected
