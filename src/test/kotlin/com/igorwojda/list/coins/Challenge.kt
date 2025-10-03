@@ -3,6 +3,8 @@ package com.igorwojda.list.coins
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
+
+//maybe try this as a tree?  Start with empty list and each child level adds each element to the list.  Return when a node's sum >= amount.
 private fun getCoins(amount: Int, coins: List<Int>): Int {
     if (coins.isEmpty()) return 0
     else if (coins.all { it > amount }) return 1
