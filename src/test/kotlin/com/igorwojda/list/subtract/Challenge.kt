@@ -4,7 +4,23 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 private fun getSubtraction(list1: List<String>, list2: List<String>): List<String> {
-    TODO("Add your solution here")
+    val map1 = list1.associateWith { item -> list1.count { it == item } }
+    val map2 = list2.associateWith { item -> list2.count { it == item } }
+
+    if (map1 == map2) return emptyList()
+    else {
+        val result = mutableListOf<String>()
+        for (key in map1.keys) {
+            if (key !in map2.keys) repeat(map1[key] ?: 0) { result.add(key) }
+            else {
+                val count1 = map1[key] ?: 0
+                val count2 = map2[key] ?: 0
+                if (count1 != count2) repeat(count1 - count2) {result.add(key)}
+            }
+        }
+        return result
+
+    }
 }
 
 private class Test {
