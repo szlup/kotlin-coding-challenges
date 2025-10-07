@@ -17,27 +17,6 @@ private fun getCoins(amount: Int, coins: List<Int>): Int {
         }
         return sum
     }
-
-    /*else {
-        var result = 0
-        val tempList = mutableListOf<Int>()
-        var tempSum = 0
-        var i = 0
-        while (i < coins.size) {
-            var current = coins[i]
-            while (tempSum + current <= amount) {
-                tempList.add(current)
-                tempSum += current
-            }
-            if (tempSum == amount) result++
-
-            while (tempSum + coins[i+1] > amount) {
-                tempSum -= tempList.removeLast()
-            }
-
-
-        }
-    }*/
 }
 
 private fun getCoinsHelper(amount: Int, coins: List<Int>,  tempList: List<Int> = listOf()): Int {
