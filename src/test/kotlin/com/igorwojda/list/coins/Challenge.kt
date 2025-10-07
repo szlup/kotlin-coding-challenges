@@ -5,10 +5,20 @@ import org.junit.jupiter.api.Test
 
 
 //maybe try this as a tree?  Start with empty list and each child level adds each element to the list.  Return when a node's sum >= amount.
+//tree needs more structure so that you're not counting combinations with different order
 private fun getCoins(amount: Int, coins: List<Int>): Int {
     if (coins.isEmpty()) return 0
-    else if (coins.all { it > amount }) return 1
+    else if (amount == 0) return 1
+    else if (coins.all { it > amount }) return 0
     else {
+        var sum = 0
+        for (i in 0..coins.lastIndex) {
+            sum += getCoinsHelper(amount, coins.subList(i, coins.size) , listOf(coins[i]))
+        }
+        return sum
+    }
+
+    /*else {
         var result = 0
         val tempList = mutableListOf<Int>()
         var tempSum = 0
@@ -27,7 +37,23 @@ private fun getCoins(amount: Int, coins: List<Int>): Int {
 
 
         }
+    }*/
+}
+
+private fun getCoinsHelper(amount: Int, coins: List<Int>,  tempList: List<Int> = listOf()): Int {
+    val tempSum = tempList.sum()
+    when {
+        tempSum == amount -> return 1
+        tempSum > amount -> return 0
+        else -> {
+            var sum = 0
+            for (i in 0..coins.lastIndex) {
+                sum += getCoinsHelper(amount, coins.subList(i, coins.size), tempList + coins[i])
+            }
+            return sum
+        }
     }
+
 }
 
 private class Test {
