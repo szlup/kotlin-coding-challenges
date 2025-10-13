@@ -4,17 +4,40 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
 fun medianOfSortedLists(list1: List<Int>, list2: List<Int>): Double {
-    val mergedList = list1
-        .plus(list2)
-        .sorted()
 
-    val median = if (mergedList.size % 2 != 0) {
-        mergedList[mergedList.size / 2].toDouble()
-    } else {
-        (mergedList[mergedList.size / 2].toDouble() + mergedList[mergedList.size / 2 - 1].toDouble()) / 2
+    when {
+        list1.isEmpty() && list2.isEmpty() -> return 0.0
+        list1.size == 1 && list2.size == 1 -> return list1[0] + list2[0] / 2.0
+        else -> {
+            val merged = mutableListOf<Int>()
+            val medIndex = (list1.size + list2.size) / 2
+            val isEven = (list1.size + list2.size) % 2 == 0
+
+            val left = list1.toMutableList()
+            val right = list2.toMutableList()
+
+            fun getMedian(index: Int): Double {
+                return if (isEven) (merged[index] + merged[index - 1]) / 2.0
+                else merged[index].toDouble()
+            }
+
+            while (left.isNotEmpty()) {
+                if (right.isEmpty() || left[0] < right[0]) merged.add(left.removeFirst())
+                else merged.add(right.removeFirst())
+
+                if (merged.lastIndex == medIndex) return getMedian(medIndex)
+            }
+            if (right.isNotEmpty()) {
+                right.forEach {
+                    merged.add(it)
+                    if (merged.lastIndex == medIndex) return getMedian(medIndex)
+                }
+            }
+            return getMedian(medIndex) //probably will never reach this,but so that Kotlin doesn't complain...
+
+        }
     }
 
-    return median
 }
 
 private class Test {
